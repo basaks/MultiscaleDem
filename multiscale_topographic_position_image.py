@@ -53,6 +53,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
         loc.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
 
     out_ds.FlushCache()
+    out_ds = None
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# usage: convert_tif_to_flt.sh k_15v5 k_15v5
+# usage: tif_to_flt.sh k_15v5 k_15v5
 
 # Will produce the following files:
 # k_15v5_bil.bil
@@ -24,18 +24,18 @@ fi
 geotif=$1
 flt=$2
 
-echo "Converting $1 to $2"
+echo "Converting $geotif to $flt"
 
 
 # first convert to bil
-gdal_translate -of EHdr -ot Float32 $1.tif $2_bil.bil
+gdal_translate -of EHdr -ot Float32 ${geotif}.tif ${flt}_bil.bil
 
 # mv .bil to flt, don't copy to save space, helpful for really large files
-cp $2_bil.bil $2.flt
+cp $2_bil.bil ${flt}.flt
 
 # make a copy of the projection so `gdalinfo` shows projection information
-cp $2_bil.prj $2.prj
+cp ${flt}_bil.prj ${flt}.prj
 
 
 # now change header
-python header.py -b $2_bil.hdr -f $2.hdr
+python header.py -b ${flt}_bil.hdr -f ${flt}.hdr

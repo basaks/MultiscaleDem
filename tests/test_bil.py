@@ -11,7 +11,7 @@ from header import main, constants
 
 TESTS = dirname(abspath(__file__))
 SAMPLE = join(TESTS, 'LATITUDE_GRID1')
-TIF2ARC = join(dirname(TESTS), 'convert_tif_to_arcgis.sh')
+TIF2ARC = join(dirname(TESTS), 'tif_to_flt.sh')
 
 
 @pytest.fixture
