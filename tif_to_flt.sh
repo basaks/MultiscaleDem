@@ -24,14 +24,14 @@ fi
 geotif=$1
 flt=$2
 
-echo "Converting $geotif to $flt"
+echo "Converting ${geotif}.tif to ${flt}.flt"
 
 
 # first convert to bil
 gdal_translate -of EHdr -ot Float32 ${geotif}.tif ${flt}_bil.bil
 
 # mv .bil to flt, don't copy to save space, helpful for really large files
-cp $2_bil.bil ${flt}.flt
+mv $2_bil.bil ${flt}.flt
 
 # make a copy of the projection so `gdalinfo` shows projection information
 cp ${flt}_bil.prj ${flt}.prj
