@@ -30,14 +30,18 @@ def main(bil_hdr_file, flt_hdr_file):
             if k in constants:
                 bil_hdr[k] = conversion_map[k](v)
 
+    flt_hdr = {}
     with open(flt_hdr_file, 'w') as csvfile2:
         csvwriter = csv.writer(csvfile2, delimiter=' ')
         csvwriter.writerow(['BYTEORDER', 'LSBFIRST'])
         for k, v in bil_hdr.items():
             if k == 'ULYMAP':
                 # TODO: can improve `yllcorner` by using gdal corner coords
-                v = str(float(v) - bil_hdr['NROWS'] * bil_hdr['XDIM'])
+                v = float(v) - bil_hdr['NROWS'] * bil_hdr['XDIM']
+            flt_hdr[constants[k]] = v
             csvwriter.writerow([constants[k], v])
+
+    return bil_hdr, flt_hdr
 
 
 if __name__ == '__main__':
