@@ -15,16 +15,26 @@ standard deviation from the mean of a Gaussian distribution includes
 nearly 99% of the samples.
 """
 from optparse import OptionParser
+import logging
 import numpy as np
 from osgeo import gdal, gdalconst
 
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger(__name__)
+
 
 def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
+
+    log.info('Reading the three scales from MadElevationDeviation .flt files')
+    log.debug('Reading local .flt file')
     loc = np.fromfile(local, dtype=np.float32)
+    log.debug('Reading meso .flt file')
     mes = np.fromfile(meso, dtype=np.float32)
+    log.debug('Reading broad .flt file')
     bro = np.fromfile(broad, dtype=np.float32)
 
     # standardise and take absolute, and scale by cutoff
+    log.info('Standardization and RGB converseion')
     loc = (np.abs(loc - np.mean(loc)) / np.std(loc)) * 255/cutoff
     mes = (np.abs(mes - np.mean(mes)) / np.std(mes)) * 255/cutoff
     bro = (np.abs(bro - np.mean(bro)) / np.std(bro)) * 255/cutoff
@@ -45,6 +55,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
     out_ds.SetProjection(src_ds.GetProjection())
 
     # write data in the three bands
+    log.info('Whiteing RGB data into the output miltibanded RGB geotif')
     out_ds.GetRasterBand(1).WriteArray(
         bro.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
     out_ds.GetRasterBand(2).WriteArray(
@@ -54,6 +65,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     out_ds.FlushCache()
     out_ds = None
+    log.info('Finished!')
 
 
 if __name__ == '__main__':
