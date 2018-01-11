@@ -51,9 +51,6 @@ if __name__ == '__main__':
 
     options, args = parser.parse_args()
 
-    print(options)
-
-    # import IPython; IPython.embed(); import sys; sys.exit()
     if not options.bil_hdr_file:  # if filename is not given
         parser.error('Input .bil header filename not given.')
 
