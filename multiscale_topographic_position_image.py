@@ -1,4 +1,6 @@
 """
+from: http://www.sciencedirect.com/science/article/pii/S0169555X15300076
+
 The MTPCC image was created by combining the DEV max rasters of
 the local-, meso-, and broad-scale ranges into the respective blue,
 green, and red channels of a 24-bit color image. The three DEV max rasters
@@ -71,7 +73,7 @@ if __name__ == '__main__':
                            'georeferencign information from')
 
     parser.add_option('-o', '--output_tif', type=str, dest='output_tif',
-                      default='multiscaled_output.tif',
+                      default='multiscaled_dem.tif',
                       help='Optional output tif filename')
 
     parser.add_option('-c', '--cutoff', type=float, dest='cutoff',
