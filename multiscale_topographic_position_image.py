@@ -17,15 +17,15 @@ import numpy as np
 from osgeo import gdal, gdalconst
 
 
-def multiscale(local, meso, broad, input_tif, output_tif):
+def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
     loc = np.fromfile(local, dtype=np.float32)
     mes = np.fromfile(meso, dtype=np.float32)
     bro = np.fromfile(broad, dtype=np.float32)
 
-    # standardise and take absolute
-    loc = np.abs(loc - np.mean(loc)) / np.std(loc)
-    mes = np.abs(mes - np.mean(mes)) / np.std(mes)
-    bro = np.abs(bro - np.mean(bro)) / np.std(bro)
+    # standardise and take absolute, and scale by cutoff
+    loc = (np.abs(loc - np.mean(loc)) / np.std(loc)) * 255/cutoff
+    mes = (np.abs(mes - np.mean(mes)) / np.std(mes)) * 255/cutoff
+    bro = (np.abs(bro - np.mean(bro)) / np.std(bro)) * 255/cutoff
 
     # source information
     src_ds = gdal.Open(input_tif, gdalconst.GA_ReadOnly)
@@ -37,7 +37,7 @@ def multiscale(local, meso, broad, input_tif, output_tif):
                            xsize=src_ds.RasterXSize,
                            ysize=src_ds.RasterYSize,
                            bands=3,
-                           eType=gdal.GDT_Float32
+                           eType=gdal.GDT_Byte
                            )
     out_ds.SetGeoTransform(src_ds.GetGeoTransform())
     out_ds.SetProjection(src_ds.GetProjection())
@@ -54,8 +54,9 @@ def multiscale(local, meso, broad, input_tif, output_tif):
 
 
 if __name__ == '__main__':
-    parser = OptionParser(usage='%prog -l local_mag  -m meso_mag '
-                                '-b broad_mag -i input.tif')
+    parser = OptionParser(usage='%prog -l local_mag  -m meso_mag \n'
+                                '-b broad_mag -i input.tif -o output.tif \n'
+                                '-c cutoff')
     parser.add_option('-l', '--local', type=str, dest='local',
                       help='name of input local mag file')
 
@@ -73,6 +74,11 @@ if __name__ == '__main__':
                       default='multiscaled_output.tif',
                       help='Optional output tif filename')
 
+    parser.add_option('-c', '--cutoff', type=float, dest='cutoff',
+                      default=2.58,
+                      help='Cutoff value for integer scaling. See J. Lindsay '
+                           'paper for details.')
+
     options, args = parser.parse_args()
 
     if not options.local:  # if filename is not given
@@ -88,4 +94,4 @@ if __name__ == '__main__':
         parser.error('Input geotif file must be provided.')
 
     multiscale(options.local, options.meso, options.broad,
-               options.input_tif, options.output_tif)
+               options.input_tif, options.output_tif, options.cutoff)
