@@ -59,3 +59,6 @@ def test_bil_header(random_filename):
 
     raster = tif.GetRasterBand(1).ReadAsArray()
     np.testing.assert_array_almost_equal(raster.flatten(), bil_data, decimal=4)
+
+    np.testing.assert_array_almost_equal(
+        bil_data.reshape((tif.RasterYSize, tif.RasterXSize)), raster)
