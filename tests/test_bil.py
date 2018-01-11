@@ -56,3 +56,6 @@ def test_bil_header(random_filename):
 
     assert tif.RasterYSize == bil_hdr['NROWS'] == flt_hdr['NROWS']
     assert tif.RasterXSize == bil_hdr['NCOLS'] == flt_hdr['NCOLS']
+
+    raster = tif.GetRasterBand(1).ReadAsArray()
+    np.testing.assert_array_almost_equal(raster.flatten(), bil_data, decimal=4)
