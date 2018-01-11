@@ -45,8 +45,7 @@ def main(bil_hdr_file, flt_hdr_file):
 
 
 if __name__ == '__main__':
-    parser = OptionParser(usage='%prog -b bil_hdr_file  -f flt_hdr_file \n'
-                          'times of india')
+    parser = OptionParser(usage='%prog -b bil_hdr_file  -f flt_hdr_file')
     parser.add_option('-b', '--bil_hdr_file', type=str, dest='bil_hdr_file',
                       help='name of input .bil header file')
 
