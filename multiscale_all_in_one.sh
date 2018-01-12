@@ -3,7 +3,7 @@
 dem=$1
 
 # convert geotif into arcgis flt
-./tif_to_flt.sh ${dem} ${dem}
+./tif_to_flt.sh ${dem} ${dem} 1
 
 # generate the local, meso and broad `MaxElevationDeviation`s
 ./multiscale.sh ${dem}
