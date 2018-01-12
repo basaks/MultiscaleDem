@@ -1,4 +1,4 @@
-### MultiscaleTopographicPositionImage of DEM
+## MultiscaleTopographicPositionImage of DEM
 
 We follow the paper by J.B.Lindsay, J.M.H.Cockburn, H.A.J.Russell titled 
 [`An integral image approach to performing multi-scale topographic position 
@@ -24,19 +24,22 @@ available via ArcGIS.
 1. Convert `GeoTiff` into `.flt`:
     
     
-    ./tif_to_flt.sh dem dem
+    ./tif_to_flt.sh foo bar
     
-The above script read in a `GeoTiff` named `dem.tif`, and outputs a `dem.flt`
-and a `dem_bil.bil` with the corresponding header files.
+The above script read in a `GeoTiff` named `foo.tif`, and outputs a `bar.flt`
+and a `bar_bil.bil` with the corresponding header and projection files.
 
-2. Produce `MaxElevationDevation` images from DEM
+This conversion can has been tested using the `tests/test_bil.py` file. To 
+run the tests, use `pytest tests/test_bil.py`.
+
+2. Produce `MaxElevationDevation` images from DEM:
 
 The script `multiscale.sh` produces the three `local`, `meso` and `broad` range
 `MaxElevationDevation` outputs. Use it as the following:
     
     ./multiscale.sh dem
     
-3. Combine the three scales into RGB
+3. Combine the three scales into RGB:
  
 The three outputs are combined in this step to produce the multibanded RGB 
 image following this excerpt from the paper by Lindsay _et. al._
@@ -48,7 +51,7 @@ The above will output a `multiscaled_dem.tif`, which is a RGB banded 8 bite
 (0-255) integer for all three colours.
 
 
-### All in one
+## All in one
 
 The three scripts above are combined into the the `multiscale_all_in_one.sh`.
 Use it with the input `dem` geotif.
@@ -56,3 +59,21 @@ Use it with the input `dem` geotif.
     ./multiscale_all_in_one.sh dem
    
 The final result of this will be `multiscaled_dem.tif`.
+
+
+## Required softwares
+
+One will need to install 
+[WhiteboxBoxTools](https://github.com/jblindsay/whitebox-geospatial-analysis-tools/tree/master/whitebox_tools), 
+[gdal](http://download.osgeo.org/gdal/) and need python with the following 
+packages:
+
+    ```bash
+    $ pil list
+    GDAL (this is the python binging for system isntalled gdal)
+    numpy
+    pytest (if testing)
+    ```  
+Also create a symlink to the `whitebox_tools` like so:
+
+    sudo ln -s /path/to/whitebox-geospatial-analysis-tools/whitebox_tools/target/release/whitebox_tools /usr/local/bin/whitebox_tools

@@ -15,5 +15,3 @@ python multiscale_topographic_position_image.py \
     -b ${dem}_mag2.flt \
     -i ${dem}.tif \
     -o multiscaled_${dem}.tif
-
-
