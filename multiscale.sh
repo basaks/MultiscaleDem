@@ -8,29 +8,32 @@ fi
 flt=$1
 echo "Constructing local, meso and broad scale MaxElevationDeviation for $1.flt"
 
-whitebox_tools -r=MaxElevationDeviation -v --dem=$PWD/$1.flt \
-    -out_mag=$PWD/${flt}_mag1.flt \
-    --out_scale=$PWD/${flt}_scale1.flt \
-    --min_scale=3 --max_scale=99 --step=1
+maxeledev(){
+    echo "submitting job min_scale:$2, max_scale:$3, spep: $4"
+    scale=$1
+    min_scale=$2
+    max_scale=$3
+    step=$4
 
-# remove the unused _scale file
-rm $PWD/${flt}_scale1.*
+    whitebox_tools -r=MaxElevationDeviation -v --dem=$PWD/${flt}.flt \
+        -out_mag=$PWD/${flt}_mag${scale}.flt \
+        --out_scale=$PWD/${flt}_scale${scale}.flt \
+        --min_scale=${min_scale} --max_scale=${max_scale} --step=${step}
 
-whitebox_tools -r=MaxElevationDeviation -v --dem=$PWD/${flt}.flt \
-    -out_mag=$PWD/${flt}_mag2.flt \
-    --out_scale=$PWD/${flt}_scale2.flt \
-    --min_scale=100 --max_scale=795 --step=5
+    # remove the unused _scale file
+    rm $PWD/${flt}_scale${scale}.*
+}
 
-# remove the unused _scale file
-rm $PWD/${flt}_scale2.*
+# Define the arrays
+min_scales=(3 100 800)
+max_scales=(99 795 1800)
+steps=(1 5 10)
 
-whitebox_tools -r=MaxElevationDeviation -v --dem=$PWD/${flt}.flt \
-    -out_mag=$PWD/${flt}_mag3.flt \
-    --out_scale=$PWD/${flt}_scale3.flt \
-    --min_scale=800 --max_scale=1800 --step=10
-
-# remove the unused _scale file
-rm $PWD/${flt}_scale3.*
+# do the parallel loop
+for ((i=0;i<3;i++)); do
+    echo "${i}, ${min_scales[$i]}, ${max_scales[$i]}, ${steps[$i]}"
+    maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]}
+done
 
 #  MultiscaleTopographicPositionImage is not working on ubuntu
 #whitebox_tools -r=MultiscaleTopographicPositionImage -v \
