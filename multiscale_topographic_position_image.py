@@ -14,8 +14,10 @@ value of 255. The cutoff value of 2.58 was selected because the ±2.58
 standard deviation from the mean of a Gaussian distribution includes
 nearly 99% of the samples.
 """
+import os
 from optparse import OptionParser
 import logging
+import csv
 import numpy as np
 from osgeo import gdal, gdalconst
 
@@ -23,26 +25,45 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
+def read_flt(flt_file):
+    data = np.fromfile(flt_file, dtype=np.float32)
+    flt_hdr_file = os.path.splitext(flt_file)[0] + '.hdr'
+
+    def _get_no_data(hdr_file):
+        with open(hdr_file, 'r') as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=' ')
+            for l in csvreader:
+                k, v = l
+                if k == 'NODATA_VALUE':
+                    return float(v)
+            raise ValueError('NODATA_VALUE was not found '
+                             'in the {}'.format(flt_hdr_file))
+    nodata_value = _get_no_data(flt_hdr_file)
+    masked_data = np.ma.array(data, dtype=np.float32,
+                              mask=data == nodata_value)
+
+    return masked_data
+
+
 def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     log.info('Reading the three scales from MadElevationDeviation .flt files')
     log.debug('Reading local .flt file')
-    loc = np.fromfile(local, dtype=np.float32)
+    loc = read_flt(local)
     log.debug('Reading meso .flt file')
-    mes = np.fromfile(meso, dtype=np.float32)
+    mes = read_flt(meso)
     log.debug('Reading broad .flt file')
-    bro = np.fromfile(broad, dtype=np.float32)
+    bro = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
     log.info('Standardization and RGB converseion')
-    loc = (np.abs(loc - np.mean(loc)) / np.std(loc)) * 255/cutoff
-    mes = (np.abs(mes - np.mean(mes)) / np.std(mes)) * 255/cutoff
-    bro = (np.abs(bro - np.mean(bro)) / np.std(bro)) * 255/cutoff
+    loc = (np.ma.abs(loc - np.ma.mean(loc)) / np.ma.std(loc)) * 255/cutoff
+    mes = (np.ma.abs(mes - np.ma.mean(mes)) / np.ma.std(mes)) * 255/cutoff
+    bro = (np.ma.abs(bro - np.ma.mean(bro)) / np.ma.std(bro)) * 255/cutoff
 
     # source information
     src_ds = gdal.Open(input_tif, gdalconst.GA_ReadOnly)
 
-    # import IPython; IPython.embed(); import sys; sys.exit()
     # output ds
     driver = gdal.GetDriverByName('GTiff')
     out_ds = driver.Create(output_tif,
