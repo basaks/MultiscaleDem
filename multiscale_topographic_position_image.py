@@ -25,9 +25,12 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
-def read_flt(flt_file):
+def _read_flt(flt_file):
     data = np.fromfile(flt_file, dtype=np.float32)
     flt_hdr_file = os.path.splitext(flt_file)[0] + '.hdr'
+    if not os.path.exists(flt_hdr_file):
+        raise FileNotFoundError('{flt_file} corresponding header file was not '
+                                'found'.format(flt_file=flt_file))
 
     def _get_no_data(hdr_file):
         with open(hdr_file, 'r') as csvfile:
@@ -49,17 +52,17 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     log.info('Reading the three scales from MadElevationDeviation .flt files')
     log.debug('Reading local .flt file')
-    loc = read_flt(local)
+    loc = _read_flt(local)
     log.debug('Reading meso .flt file')
-    mes = read_flt(meso)
+    mes = _read_flt(meso)
     log.debug('Reading broad .flt file')
-    bro = read_flt(broad)
+    bro = _read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
     log.info('Standardization and RGB converseion')
-    loc = (np.ma.abs(loc - np.ma.mean(loc)) / np.ma.std(loc)) * 255/cutoff
-    mes = (np.ma.abs(mes - np.ma.mean(mes)) / np.ma.std(mes)) * 255/cutoff
-    bro = (np.ma.abs(bro - np.ma.mean(bro)) / np.ma.std(bro)) * 255/cutoff
+    loc = (np.ma.abs(loc - loc.mean()) / loc.std()) * 255/cutoff
+    mes = (np.ma.abs(mes - mes.mean()) / mes.std()) * 255/cutoff
+    bro = (np.ma.abs(bro - bro.mean()) / bro.std()) * 255/cutoff
 
     # source information
     src_ds = gdal.Open(input_tif, gdalconst.GA_ReadOnly)
