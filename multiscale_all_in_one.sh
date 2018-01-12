@@ -10,9 +10,9 @@ dem=$1
 
 # generate the final RGB `MultiscaleTopographicPositionImage` geotif output
 python multiscale_topographic_position_image.py \
-    -l ${dem}_mag1.flt \
-    -m ${dem}_mag2.flt \
-    -b ${dem}_mag3.flt \
+    -l ${dem}_mag0.flt \
+    -m ${dem}_mag1.flt \
+    -b ${dem}_mag2.flt \
     -i ${dem}.tif \
     -o multiscaled_${dem}.tif
 
