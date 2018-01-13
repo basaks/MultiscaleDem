@@ -29,7 +29,7 @@ available via ArcGIS.
 The above script read in a `GeoTiff` named `foo.tif`, and outputs a `bar.flt`
 and a `bar_bil.bil` with the corresponding header and projection files.
 
-This conversion can has been tested using the `tests/test_bil.py` file. To 
+This conversion has been tested using the `tests/test_bil.py` file. To 
 run the tests, use `pytest tests/test_bil.py`.
 
 2. Produce `MaxElevationDevation` images from DEM:
