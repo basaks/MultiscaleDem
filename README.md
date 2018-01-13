@@ -54,11 +54,12 @@ The above will output a `multiscaled_dem.tif`, which is a RGB banded 8 bite
 ## All in one
 
 The three scripts above are combined into the the `multiscale_all_in_one.sh`.
-Use it with the input `dem` geotif.
+Use it with the input `dem.tif` geotif as the following (without the `.tif`).
 
     ./multiscale_all_in_one.sh dem
    
-The final result of this will be `multiscaled_dem.tif`.
+The final result of this will be `multiscaled_dem.tif` with projection and 
+georeferencing information copied from the input dem.tif.
 
 
 ## Required softwares
