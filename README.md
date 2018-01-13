@@ -71,10 +71,18 @@ packages:
 
     ```bash
     $ pil list
-    GDAL (this is the python binging for system isntalled gdal)
+    GDAL (this is the python binding for system isntalled gdal)
     numpy
     pytest (if testing)
     ```  
 Also create a symlink to the `whitebox_tools` like so:
 
     sudo ln -s /path/to/whitebox-geospatial-analysis-tools/whitebox_tools/target/release/whitebox_tools /usr/local/bin/whitebox_tools
+
+## ArcGIS .flt/.bil to geotif
+
+We also provide a script for conversion of ArcGIS `.flt` or `.bil` file into 
+getotif. Run this script as:
+        
+    $ python flt_to_tif.py -i dem_mag1.flt -o dem_mag1.tif -r dem.tif
+  
