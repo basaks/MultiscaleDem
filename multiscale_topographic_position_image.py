@@ -1,18 +1,17 @@
 """
 from: http://www.sciencedirect.com/science/article/pii/S0169555X15300076
 
-The MTPCC image was created by combining the DEV max rasters of
-the local-, meso-, and broad-scale ranges into the respective blue,
-green, and red channels of a 24-bit color image. The three DEV max rasters
-were first processed to linearly rescale their absolute grid cell values
-within the range 0–2.58 to the output 8-bit range of 0–255. Grid cells
-occupying an average landscape position within a particular range
-were therefore assigned the lowest values after rescaling. Highly deviat-
-ed locations (i.e. exceptionally elevated or depressed sites) with input
-pixel values greater than the 2.58 cutoff value were assigned an output
-value of 255. The cutoff value of 2.58 was selected because the ±2.58
-standard deviation from the mean of a Gaussian distribution includes
-nearly 99% of the samples.
+The MTPCC image was created by combining the DEV max rasters of the local-,
+meso-, and broad-scale ranges into the respective blue, green, and red
+channels of a 24-bit color image. The three DEV max rasters were first
+processed to linearly rescale their absolute grid cell values within the
+range 0–2.58 to the output 8-bit range of 0–255. Grid cells occupying an
+average landscape position within a particular range were therefore assigned
+the lowest values after rescaling. Highly deviated locations (i.e.
+exceptionally elevated or depressed sites) with input pixel values greater
+than the 2.58 cutoff value were assigned an output value of 255. The cutoff
+value of 2.58 was selected because the ±2.58 standard deviation from the
+mean of a Gaussian distribution includes nearly 99% of the samples.
 """
 import os
 from optparse import OptionParser

@@ -42,7 +42,21 @@ The script `multiscale.sh` produces the three `local`, `meso` and `broad` range
 3. Combine the three scales into RGB:
  
 The three outputs are combined in this step to produce the multibanded RGB 
-image following this excerpt from the paper by Lindsay _et. al._
+image following this excerpt from the paper by Lindsay _et. al._:
+
+    The MTPCC image was created by combining the DEV max rasters of the local-,
+    meso-, and broad-scale ranges into the respective blue, green, and red
+    channels of a 24-bit color image. The three DEV max rasters were first
+    processed to linearly rescale their absolute grid cell values within the
+    range 0–2.58 to the output 8-bit range of 0–255. Grid cells occupying an
+    average landscape position within a particular range were therefore assigned
+    the lowest values after rescaling. Highly deviated locations (i.e.
+    exceptionally elevated or depressed sites) with input pixel values greater
+    than the 2.58 cutoff value were assigned an output value of 255. The cutoff
+    value of 2.58 was selected because the ±2.58 standard deviation from the
+    mean of a Gaussian distribution includes nearly 99% of the samples.
+
+Here is how to use this script:
 
     python multiscale_topographic_position_image.py -l dem_mag1.flt \
         -m dem_mag2.flt -b dem_mag3.flt -i dem.tif -o multiscaled_dem.tif    
@@ -59,7 +73,7 @@ Use it with the input `dem.tif` geotif as the following (without the `.tif`).
     ./multiscale_all_in_one.sh dem
    
 The final result of this will be `multiscaled_dem.tif` with projection and 
-georeferencing information copied from the input dem.tif.
+georeferencing information copied from the input `dem.tif`.
 
 
 ## Required softwares
@@ -69,20 +83,18 @@ One will need to install
 [gdal](http://download.osgeo.org/gdal/) and need python with the following 
 packages:
 
-    ```bash
-    $ pil list
-    GDAL (this is the python binding for system isntalled gdal)
+    GDAL (this is the python binding for system installed gdal)
     numpy
     pytest (if testing)
-    ```  
-Also create a symlink to the `whitebox_tools` like so:
+      
+Also create a symlink to the `whitebox_tools`:
 
     sudo ln -s /path/to/whitebox-geospatial-analysis-tools/whitebox_tools/target/release/whitebox_tools /usr/local/bin/whitebox_tools
 
 ## ArcGIS .flt/.bil to geotif
 
 We also provide a script for conversion of ArcGIS `.flt` or `.bil` file into 
-getotif. Run this script as:
+geotif. Run this script as:
         
     $ python flt_to_tif.py -i dem_mag1.flt -o dem_mag1.tif -r dem.tif
   
