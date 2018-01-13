@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
-def _read_flt(flt_file):
+def read_flt(flt_file):
     data = np.fromfile(flt_file, dtype=np.float32)
     flt_hdr_file = os.path.splitext(flt_file)[0] + '.hdr'
     if not os.path.exists(flt_hdr_file):
@@ -52,11 +52,11 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     log.info('Reading the three scales from MadElevationDeviation .flt files')
     log.debug('Reading local .flt file')
-    loc = _read_flt(local)
+    loc = read_flt(local)
     log.debug('Reading meso .flt file')
-    mes = _read_flt(meso)
+    mes = read_flt(meso)
     log.debug('Reading broad .flt file')
-    bro = _read_flt(broad)
+    bro = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
     log.info('Standardization and RGB converseion')
@@ -79,7 +79,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
     out_ds.SetProjection(src_ds.GetProjection())
 
     # write data in the three bands
-    log.info('Whiteing RGB data into the output miltibanded RGB geotif')
+    log.info('Writing RGB data into the output miltibanded RGB geotif')
     out_ds.GetRasterBand(1).WriteArray(
         bro.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
     out_ds.GetRasterBand(2).WriteArray(

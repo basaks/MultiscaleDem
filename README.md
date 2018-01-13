@@ -29,7 +29,7 @@ available via ArcGIS.
 The above script read in a `GeoTiff` named `foo.tif`, and outputs a `bar.flt`
 and a `bar_bil.bil` with the corresponding header and projection files.
 
-This conversion can has been tested using the `tests/test_bil.py` file. To 
+This conversion has been tested using the `tests/test_bil.py` file. To 
 run the tests, use `pytest tests/test_bil.py`.
 
 2. Produce `MaxElevationDevation` images from DEM:
@@ -54,11 +54,12 @@ The above will output a `multiscaled_dem.tif`, which is a RGB banded 8 bite
 ## All in one
 
 The three scripts above are combined into the the `multiscale_all_in_one.sh`.
-Use it with the input `dem` geotif.
+Use it with the input `dem.tif` geotif as the following (without the `.tif`).
 
     ./multiscale_all_in_one.sh dem
    
-The final result of this will be `multiscaled_dem.tif`.
+The final result of this will be `multiscaled_dem.tif` with projection and 
+georeferencing information copied from the input dem.tif.
 
 
 ## Required softwares
