@@ -22,11 +22,11 @@ available via ArcGIS.
 ### Steps to MultiscaleTopographicPositionImage
 
 1. Convert `GeoTiff` into `.flt`:
+
+
+    ./tif_to_flt.sh foo bar    
     
-    
-    ./tif_to_flt.sh foo bar
-    
-The above script read in a `GeoTiff` named `foo.tif`, and outputs a `bar.flt`
+This script reads in a `GeoTiff` named `foo.tif`, and outputs a `bar.flt`
 and a `bar_bil.bil` with the corresponding header and projection files.
 
 This conversion has been tested using the `tests/test_bil.py` file. To 

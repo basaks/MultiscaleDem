@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
 
-if [ $# -ne 1 ]; then
-    echo $0: usage: ./multiscale.sh flt_dem without the .flt extension
+if [[ $# -lt 1 ]]; then
+    echo $0: usage1: ./multiscale.sh flt_dem
+    echo $0: usage2: ./multiscale.sh flt_dem 1
+    echo $0: "2nd parameter is the parallel boolean flag, needs GNU parallel
+    package. Default is 0 or sequential processing."
+    echo $0: the flt_dem is the dem flt filename without the .flt extension
     exit 1
 fi
 
 flt=$1
-echo "Constructing local, meso and broad scale MaxElevationDeviation for $1.flt"
+parallel_bool=${2-0}  # default is sequential
+echo "Constructing local, meso and broad scale MaxElevationDeviation for $1
+.flt in parallel"
+
+echo ${parallel_bool}
 
 maxeledev(){
-    echo "submitting job min_scale:$2, max_scale:$3, spep: $4"
+    echo "Calculate maxeledev for flt: $5 with params min_scale:$2, max_scale:$3, step: $4"
     scale=$1
     min_scale=$2
     max_scale=$3
     step=$4
+    flt=$5
 
     whitebox_tools -r=MaxElevationDeviation -v --dem=$PWD/${flt}.flt \
         -out_mag=$PWD/${flt}_mag${scale}.flt \
@@ -29,13 +38,22 @@ min_scales=(3 100 800)
 max_scales=(99 795 1800)
 steps=(1 5 10)
 
-# do the parallel loop
-for ((i=0;i<3;i++)); do
-    echo "${i}, ${min_scales[$i]}, ${max_scales[$i]}, ${steps[$i]}"
-    maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]} &
-done
+export -f maxeledev
 
-wait
+if [[ ${parallel_bool} -eq 1 ]]; then
+    echo 'Parallel processin g of MaxElevationDeviation.'
+    echo 'Needs ~3X memory compared to sequential processing'
+    parallel --jobs 3 -m maxeledev ::: \
+        0 ${min_scales[0]} ${max_scales[0]} ${steps[0]} ${flt} \
+        1 ${min_scales[1]} ${max_scales[1]} ${steps[1]} ${flt} \
+        2 ${min_scales[2]} ${max_scales[2]} ${steps[2]} ${flt}
+else
+    echo 'Sequential processing of MaxElevationDeviation. Choose this option
+    when not enough memory is available'
+    for ((i=0;i<3;i++)); do
+        maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]} ${flt}
+    done
+fi
 
 echo 'Finished processing all MaxElevationDeviations'
 
