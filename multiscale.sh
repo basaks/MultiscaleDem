@@ -10,11 +10,9 @@ if [[ $# -lt 1 ]]; then
 fi
 
 flt=$1
-parallel_bool=${2-0}  # default is sequential
+parallel_bool=${2-0}  # default is 0, .i.esequential
 echo "Constructing local, meso and broad scale MaxElevationDeviation for $1
 .flt in parallel"
-
-echo ${parallel_bool}
 
 maxeledev(){
     echo "Calculate maxeledev for flt: $5 with params min_scale:$2, max_scale:$3, step: $4"
@@ -40,16 +38,22 @@ steps=(1 5 10)
 
 export -f maxeledev
 
+if ! [[ -x "$(command -v parallel)" ]]; then
+    echo "Warning: GNU parallel is not installed. Install it with 'apt install parallel' "
+    echo "Info: Will process dems in sequence"
+    parallel_bool=0
+fi
+
 if [[ ${parallel_bool} -eq 1 ]]; then
-    echo 'Parallel processin g of MaxElevationDeviation.'
-    echo 'Needs ~3X memory compared to sequential processing'
-    parallel --jobs 3 -m maxeledev ::: \
-        0 ${min_scales[0]} ${max_scales[0]} ${steps[0]} ${flt} \
-        1 ${min_scales[1]} ${max_scales[1]} ${steps[1]} ${flt} \
-        2 ${min_scales[2]} ${max_scales[2]} ${steps[2]} ${flt}
+        echo 'Info: Parallel processin g of MaxElevationDeviation.'
+        echo 'Info: Needs ~3X memory compared to sequential processing'
+        parallel --jobs 3 -m maxeledev ::: \
+            0 ${min_scales[0]} ${max_scales[0]} ${steps[0]} ${flt} \
+            1 ${min_scales[1]} ${max_scales[1]} ${steps[1]} ${flt} \
+            2 ${min_scales[2]} ${max_scales[2]} ${steps[2]} ${flt}
 else
-    echo 'Sequential processing of MaxElevationDeviation. Choose this option
-    when not enough memory is available'
+    echo 'Info: Sequential processing of MaxElevationDeviation.'
+    echo 'Info: Choose this option when not enough memory is available'
     for ((i=0;i<3;i++)); do
         maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]} ${flt}
     done
