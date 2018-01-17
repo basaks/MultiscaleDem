@@ -14,7 +14,7 @@ def convert_flt_to_geotif(flt_file, output_tif, ref):
     src_ds = gdal.Open(ref, gdalconst.GA_ReadOnly)
 
     log.info('Reading flt data from {}'.format(flt_file))
-    flt = read_flt(flt_file)
+    flt, nodata_value = read_flt(flt_file)
 
     driver = gdal.GetDriverByName('GTiff')
     out_ds = driver.Create(output_tif,
@@ -26,11 +26,11 @@ def convert_flt_to_geotif(flt_file, output_tif, ref):
     out_ds.SetGeoTransform(src_ds.GetGeoTransform())
     out_ds.SetProjection(src_ds.GetProjection())
 
-    # write data in the three bands
+    # write data in band 1
     log.info('Writing flt data into the output geotif')
     out_ds.GetRasterBand(1).WriteArray(
         flt.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
-
+    out_ds.GetRasterBand(1).SetNoDataValue(nodata_value)
     out_ds.FlushCache()
     out_ds = None
     log.info('Finished!')

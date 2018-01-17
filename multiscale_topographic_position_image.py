@@ -42,20 +42,21 @@ def read_flt(flt_file):
                              'in the {}'.format(flt_hdr_file))
     nodata_value = _get_no_data(flt_hdr_file)
     masked_data = np.ma.array(data, dtype=np.float32,
-                              mask=data == nodata_value)
+                              mask=data == nodata_value,
+                              )
 
-    return masked_data
+    return masked_data, nodata_value
 
 
 def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     log.info('Reading the three scales from MadElevationDeviation .flt files')
     log.debug('Reading local .flt file')
-    loc = read_flt(local)
+    loc, _ = read_flt(local)
     log.debug('Reading meso .flt file')
-    mes = read_flt(meso)
+    mes, _ = read_flt(meso)
     log.debug('Reading broad .flt file')
-    bro = read_flt(broad)
+    bro, _ = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
     log.info('Standardization and RGB converseion')
