@@ -2,6 +2,7 @@
 A quick and dirty script to add to the mask of a raster using an external mask.
 Worked perfectly first time :)
 """
+import numpy as np
 from osgeo import gdal, gdalconst
 dem = 'D90_M_NoData.tif'
 mask = 'Mask90.tif'
@@ -12,18 +13,20 @@ ms = gdal.Open(mask, gdalconst.GA_ReadOnly)
 
 print('opened rasters')
 
-ds_nodata = src_ds.GetRasterBand(1).GetNoDataValue()
-ms_nodata = ms.GetRasterBand(1).GetNoDataValue()
-
-print('got no data')
 ds_data = src_ds.GetRasterBand(1).ReadAsArray()
+
+ds_nodata = getattr(np, str(ds_data.dtype))(
+    src_ds.GetRasterBand(1).GetNoDataValue()
+)
 ds_mask = ds_data == ds_nodata
 
 print('got data')
 
 ms_data = ms.GetRasterBand(1).ReadAsArray()
+ms_nodata = getattr(np, str(ms_data.dtype))(
+    ms.GetRasterBand(1).GetNoDataValue()
+)
 ms_mask = ms_data == ms_nodata
-
 print('got mask data')
 
 ds_mask += ms_mask
@@ -47,3 +50,4 @@ out_ds.GetRasterBand(1).WriteArray(
 out_ds.GetRasterBand(1).SetNoDataValue(ds_nodata)
 out_ds.FlushCache()
 out_ds = None
+

@@ -59,7 +59,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
     bro, _ = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
-    log.info('Standardization and RGB converseion')
+    log.info('Standardization and RGB conversion')
     loc = (np.ma.abs(loc - loc.mean()) / loc.std()) * 255/cutoff
     mes = (np.ma.abs(mes - mes.mean()) / mes.std()) * 255/cutoff
     bro = (np.ma.abs(bro - bro.mean()) / bro.std()) * 255/cutoff
