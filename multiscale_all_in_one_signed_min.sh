@@ -14,4 +14,4 @@ python multiscale_topographic_position_image.py \
     -m ${dem}_min_mag1.flt \
     -b ${dem}_min_mag2.flt \
     -i ${dem}.tif \
-    -o multiscaled_${dem}.tif
+    -o multiscaled_min_${dem}.tif
