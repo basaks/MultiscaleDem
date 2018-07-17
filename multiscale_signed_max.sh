@@ -24,13 +24,13 @@ maxeledev(){
     step=$4
     flt=$5
 
-    $WHITEBOX_TOOLS -r=MaxElevationDeviation -v --dem=$PWD/${flt}.flt \
-        -out_mag=$PWD/${flt}_mag${scale}.flt \
-        --out_scale=$PWD/${flt}_scale${scale}.flt \
+    $WHITEBOX_TOOLS -r=MaxSignedElevationDeviation -v --dem=$PWD/${flt}.flt \
+        -out_mag=$PWD/${flt}_max_mag${scale}.flt \
+        --out_scale=$PWD/${flt}_max_scale${scale}.flt \
         --min_scale=${min_scale} --max_scale=${max_scale} --step=${step}
 
     # remove the unused _scale file
-    rm $PWD/${flt}_scale${scale}.*
+    rm $PWD/${flt}_max_scale${scale}.*
 }
 
 # Define the arrays

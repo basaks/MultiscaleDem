@@ -1,18 +1,3 @@
-"""
-from: http://www.sciencedirect.com/science/article/pii/S0169555X15300076
-
-The MTPCC image was created by combining the DEV max rasters of the local-,
-meso-, and broad-scale ranges into the respective blue, green, and red
-channels of a 24-bit color image. The three DEV max rasters were first
-processed to linearly rescale their absolute grid cell values within the
-range 0–2.58 to the output 8-bit range of 0–255. Grid cells occupying an
-average landscape position within a particular range were therefore assigned
-the lowest values after rescaling. Highly deviated locations (i.e.
-exceptionally elevated or depressed sites) with input pixel values greater
-than the 2.58 cutoff value were assigned an output value of 255. The cutoff
-value of 2.58 was selected because the ±2.58 standard deviation from the
-mean of a Gaussian distribution includes nearly 99% of the samples.
-"""
 import os
 from optparse import OptionParser
 import logging
@@ -42,8 +27,7 @@ def read_flt(flt_file):
                              'in the {}'.format(flt_hdr_file))
     nodata_value = _get_no_data(flt_hdr_file)
     masked_data = np.ma.array(data, dtype=np.float32,
-                              mask=data == nodata_value,
-                              )
+                              mask=data == nodata_value)
 
     return masked_data, nodata_value
 
@@ -60,9 +44,9 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
     # standardise and take absolute, and scale by cutoff
     log.info('Standardization and RGB conversion')
-    loc = (np.ma.abs(loc - loc.mean()) / loc.std()) * 255/cutoff
-    mes = (np.ma.abs(mes - mes.mean()) / mes.std()) * 255/cutoff
-    bro = (np.ma.abs(bro - bro.mean()) / bro.std()) * 255/cutoff
+    loc = (loc - loc.mean()) / loc.std()
+    mes = (mes - mes.mean()) / mes.std()
+    bro = (bro - bro.mean()) / bro.std()
 
     # source information
     src_ds = gdal.Open(input_tif, gdalconst.GA_ReadOnly)
@@ -73,7 +57,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
                            xsize=src_ds.RasterXSize,
                            ysize=src_ds.RasterYSize,
                            bands=3,
-                           eType=gdal.GDT_Byte
+                           eType=gdal.GDT_Float32
                            )
     out_ds.SetGeoTransform(src_ds.GetGeoTransform())
     out_ds.SetProjection(src_ds.GetProjection())
