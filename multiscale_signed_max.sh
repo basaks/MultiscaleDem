@@ -12,7 +12,7 @@ fi
 WHITEBOX_TOOLS=/home/sudipta/repos/whitebox-geospatial-analysis-tools/whitebox_tools/target/release/whitebox_tools
 
 flt=$1
-parallel_bool=${2-0}  # default is 0, .i.sequential
+parallel_bool=${2-0}  # default is 0, i.e.,sequential
 echo "Constructing local, meso and broad scale MaxElevationDeviation for $1
 .flt in parallel"
 
