@@ -9,7 +9,7 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
-WHITEBOX_TOOLS=/home/sudipta/repos/whitebox-geospatial-analysis-tools/whitebox_tools/target/release/whitebox_tools
+WHITEBOX_TOOLS=/home/sudipta/repos/whitebox-tools/target/release/whitebox_tools
 
 flt=$1
 parallel_bool=${2-0}  # default is 0, i.e.,sequential
