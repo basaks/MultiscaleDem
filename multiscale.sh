@@ -32,7 +32,7 @@ steps=(1 5 10)
 # do the parallel loop
 for ((i=0;i<3;i++)); do
     echo "${i}, ${min_scales[$i]}, ${max_scales[$i]}, ${steps[$i]}"
-    maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]} &
+    maxeledev ${i} ${min_scales[$i]} ${max_scales[$i]} ${steps[$i]}  
 done
 
 wait

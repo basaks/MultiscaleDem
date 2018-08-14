@@ -25,28 +25,37 @@ def read_flt(flt_file):
                     return float(v)
             raise ValueError('NODATA_VALUE was not found '
                              'in the {}'.format(flt_hdr_file))
+
     nodata_value = _get_no_data(flt_hdr_file)
+    # import IPython; IPython.embed(); import sys; sys.exit()
     masked_data = np.ma.array(data, dtype=np.float32,
                               mask=data == nodata_value)
 
-    return masked_data
+    return masked_data, nodata_value
 
 
-def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
+def multiscale(local, meso, broad, input_tif, output_tif, cutoff,
+               reversed=0):
 
     log.info('Reading the three scales from MadElevationDeviation .flt files')
     log.debug('Reading local .flt file')
-    loc = read_flt(local)
+    loc, loc_nodata = read_flt(local)
     log.debug('Reading meso .flt file')
-    mes = read_flt(meso)
+    mes, mes_nodata = read_flt(meso)
     log.debug('Reading broad .flt file')
-    bro = read_flt(broad)
+    bro, bro_nodata = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
-    log.info('Standardization and RGB converseion')
-    loc = (np.ma.abs(loc - loc.mean()) / loc.std()) * 255/cutoff
-    mes = (np.ma.abs(mes - mes.mean()) / mes.std()) * 255/cutoff
-    bro = (np.ma.abs(bro - bro.mean()) / bro.std()) * 255/cutoff
+    log.info('Standardization and RGB conversion')
+
+    if reversed:
+        sign = -1
+    else:
+        sign = 1
+
+    loc = sign*(loc - loc.mean()) / loc.std()
+    mes = sign*(mes - mes.mean()) / mes.std()
+    bro = sign*(bro - bro.mean()) / bro.std()
 
     # source information
     src_ds = gdal.Open(input_tif, gdalconst.GA_ReadOnly)
@@ -57,7 +66,7 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
                            xsize=src_ds.RasterXSize,
                            ysize=src_ds.RasterYSize,
                            bands=3,
-                           eType=gdal.GDT_Byte
+                           eType=gdal.GDT_Float32
                            )
     out_ds.SetGeoTransform(src_ds.GetGeoTransform())
     out_ds.SetProjection(src_ds.GetProjection())
@@ -66,10 +75,13 @@ def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
     log.info('Writing RGB data into the output miltibanded RGB geotif')
     out_ds.GetRasterBand(1).WriteArray(
         bro.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
+    out_ds.GetRasterBand(1).SetNoDataValue(sign*bro_nodata)
     out_ds.GetRasterBand(2).WriteArray(
         mes.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
+    out_ds.GetRasterBand(2).SetNoDataValue(sign*mes_nodata)
     out_ds.GetRasterBand(3).WriteArray(
         loc.reshape((src_ds.RasterYSize, src_ds.RasterXSize)))
+    out_ds.GetRasterBand(3).SetNoDataValue(sign*loc_nodata)
 
     out_ds.FlushCache()
     out_ds = None
@@ -102,6 +114,11 @@ if __name__ == '__main__':
                       help='Cutoff value for integer scaling. See J. Lindsay '
                            'paper for details.')
 
+    parser.add_option('-r', '--reversed', type=int, dest='reversed',
+                      default=0,
+                      help='Cutoff value for integer scaling. See J. Lindsay '
+                           'paper for details.')
+
     options, args = parser.parse_args()
 
     if not options.local:  # if filename is not given
@@ -117,4 +134,6 @@ if __name__ == '__main__':
         parser.error('Input geotif file must be provided.')
 
     multiscale(options.local, options.meso, options.broad,
-               options.input_tif, options.output_tif, options.cutoff)
+               options.input_tif, options.output_tif, options.cutoff,
+               options.reversed)
+
