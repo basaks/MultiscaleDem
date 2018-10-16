@@ -13,7 +13,7 @@ software for creating `local`, `meso`, `broad` range `MaxElevationDeviation`.
 
 
 ### Conversion of GeoTiffs to ArcGIS .flt and .bil formats
-We have an bash script to convert commonly used `geotif` format into `
+We have a bash script to convert commonly used `geotif` format into `
 .flt` format data required by `WhiteBoxTools`. Our script uses `gdal` and 
 also outputs an intermediate `.bil` binary format data, also commonly 
 available via ArcGIS. 
@@ -61,7 +61,7 @@ Here is how to use this script:
     python multiscale_topographic_position_image.py -l dem_mag1.flt \
         -m dem_mag2.flt -b dem_mag3.flt -i dem.tif -o multiscaled_dem.tif    
 
-The above will output a `multiscaled_dem.tif`, which is a RGB banded 8 bite 
+The above will output a `multiscaled_dem.tif`, which is a RGB banded 8 bit 
 (0-255) integer for all three colours.
 
 
