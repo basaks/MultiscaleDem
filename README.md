@@ -6,6 +6,10 @@ analysis`](http://www.sciencedirect.com/science/article/pii/S0169555X15300076)
 to obtain a `MultiscaleTopographicPositionImage` map of continental Australia 
 at 90m and 30m resolution.
 
+## Download Australian continental scale MultiscaleTopographicPositionImage at 1 degree resolution from the national maps database here:
+https://nationalmap.gov.au/#share=s-3JWz920JIl3MEOPNQ58v5krJU1c
+
+Once the page loads, select `Multi-scale Topographic Position`.
 
 ### MaxElevationDeviation
 We also use the [WhiteboxBoxTools](https://github.com/jblindsay/whitebox-geospatial-analysis-tools/tree/master/whitebox_tools) 
