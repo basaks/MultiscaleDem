@@ -48,14 +48,25 @@ def read_flt(flt_file):
     return masked_data, nodata_value
 
 
+def read_tif(tif):
+    img = gdal.Open(tif)
+    band = img.GetRasterBand(1)
+    data = band.ReadAsArray()
+    nodata_value = band.GetNoDataValue()
+    masked_data = np.ma.array(data, dtype=np.float32,
+                              mask=data == nodata_value)
+
+    return masked_data, nodata_value
+
+
 def multiscale(local, meso, broad, input_tif, output_tif, cutoff):
 
-    log.info('Reading the three scales from MadElevationDeviation .flt files')
-    log.debug('Reading local .flt file')
+    log.info('Reading the mag files of three different scales')
+    log.debug('Reading local mag file')
     loc, _ = read_flt(local)
-    log.debug('Reading meso .flt file')
+    log.debug('Reading meso mag file')
     mes, _ = read_flt(meso)
-    log.debug('Reading broad .flt file')
+    log.debug('Reading broad mag file')
     bro, _ = read_flt(broad)
 
     # standardise and take absolute, and scale by cutoff
